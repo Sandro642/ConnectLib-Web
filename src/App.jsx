@@ -38,11 +38,11 @@ export default function ConnectLibLanding() {
     }, []);
 
     const features = [
-        { icon: <Box className="w-6 h-6"/>, title: "Centralized Management", desc: "All your connectors in one place" },
+        { icon: <Box className="w-6 h-6"/>, title: "Centralized Management", desc: "All your API's Rest in one Lib" },
         { icon: <Zap className="w-6 h-6"/>, title: "Automated Execution", desc: "Asynchronous jobs without blocking" },
         { icon: <Code className="w-6 h-6"/>, title: "Extensible & Modular", desc: "Architecture designed to evolve" },
         { icon: <Shield className="w-6 h-6"/>, title: "Built-in Security", desc: "Native protection of your data" },
-        { icon: <Rocket className="w-6 h-6"/>, title: "Optimal Performance", desc: "Java 23 and reactive architecture" },
+        { icon: <Rocket className="w-6 h-6"/>, title: "Optimal Performance", desc: "Java 23 and Projet Reactor" },
         { icon: <Star className="w-6 h-6"/>, title: "Detailed Logs", desc: "Complete monitoring of your flows" }
     ];
 
