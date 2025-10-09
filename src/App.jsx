@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, ChevronRight, Code, Download, Github, Rocket, Shield, Star, Zap } from 'lucide-react';
+import { Box, ChevronRight, Code, Download, Github, Rocket, Shield, Star, Zap, Package, Calendar, Tag } from 'lucide-react';
 
 function LatestVersion() {
     const [version, setVersion] = React.useState("");
@@ -9,7 +9,7 @@ function LatestVersion() {
             .then((res) => res.json())
             .then((data) => {
                 if (Array.isArray(data) && data.length > 0) {
-                    setVersion(data[0].name); // latest tag
+                    setVersion(data[0].name);
                 } else {
                     setVersion("No tags found");
                 }
@@ -18,6 +18,332 @@ function LatestVersion() {
     }, []);
 
     return <span>{version || "loading..."}</span>;
+}
+
+function DownloadsSection() {
+    const [tags, setTags] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedTag, setSelectedTag] = useState(null);
+    const itemsPerPage = 6;
+
+    useEffect(() => {
+        const fetchTags = async () => {
+            try {
+                const response = await fetch('https://api.github.com/repos/Sandro642/ConnectLib/tags');
+                const data = await response.json();
+
+                const formattedTags = data.map((tag, index) => ({
+                    id: index + 1,
+                    name: tag.name,
+                    version: tag.name,
+                    zipball_url: tag.zipball_url,
+                    tarball_url: tag.tarball_url,
+                    commit: tag.commit,
+                    jarUrl: `https://sandro642.github.io/connectlib/jar/fr/sandro642/github/ConnectLib/${tag.name}/ConnectLib-${tag.name}.jar`
+                }));
+
+                setTags(formattedTags);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching tags:', error);
+                setLoading(false);
+            }
+        };
+
+        fetchTags();
+    }, []);
+
+    const filteredTags = tags.filter(tag =>
+        tag.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        tag.version.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filteredTags.length / itemsPerPage);
+    const displayedTags = filteredTags.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (page) => {
+        if (page > 0 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text);
+    };
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-400"></div>
+            </div>
+        );
+    }
+
+    return (
+        <div id="downloads" className="relative py-20 bg-black/20 backdrop-blur-sm">
+            <div className="container mx-auto px-6">
+                <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
+                    Download <span className="text-cyan-400">ConnectLib</span>
+                </h2>
+                <p className="text-center text-gray-400 mb-12 text-lg">
+                    All available versions and releases
+                </p>
+
+                {/* Search Bar */}
+                <div className="max-w-2xl mx-auto mb-8">
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Search releases..."
+                            value={searchTerm}
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value);
+                                setCurrentPage(1);
+                            }}
+                            className="w-full px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400/50 focus:bg-white/10 transition-all"
+                        />
+                        <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Tags Grid */}
+                {!selectedTag ? (
+                    <>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            {displayedTags.map((tag) => (
+                                <div
+                                    key={tag.id}
+                                    onClick={() => setSelectedTag(tag)}
+                                    className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-cyan-400/50 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                >
+                                    <div className="flex items-start justify-between mb-4">
+                                        <div className="flex items-center gap-2">
+                                            <Package className="w-5 h-5 text-cyan-400" />
+                                            <span className="font-bold text-lg text-cyan-400">#{tag.id}</span>
+                                        </div>
+                                        <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-sm font-medium border border-purple-400/30">
+                                            {tag.version}
+                                        </span>
+                                    </div>
+
+                                    <h3 className="text-xl font-bold mb-4 text-white">{tag.name}</h3>
+
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedTag(tag);
+                                            }}
+                                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 transition-all"
+                                        >
+                                            <Code className="w-4 h-4" />
+                                            <span className="font-medium text-sm">Import</span>
+                                        </button>
+                                        <a
+                                            href={`https://github.com/Sandro642/ConnectLib/releases/tag/${tag.name}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="flex items-center justify-center px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all"
+                                        >
+                                            <Github className="w-4 h-4" />
+                                        </a>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Pagination */}
+                        {filteredTags.length > itemsPerPage && (
+                            <div className="flex justify-center items-center gap-2 mb-6">
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                >
+                                    Previous
+                                </button>
+
+                                <div className="flex gap-2">
+                                    {Array.from({ length: totalPages }, (_, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => handlePageChange(index + 1)}
+                                            className={`px-4 py-2 rounded-lg transition-all ${
+                                                currentPage === index + 1
+                                                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white'
+                                                    : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                                            }`}
+                                        >
+                                            {index + 1}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Results Info */}
+                        <div className="text-center text-gray-400 text-sm">
+                            Showing <span className="text-white font-semibold">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
+                            <span className="text-white font-semibold">{Math.min(currentPage * itemsPerPage, filteredTags.length)}</span> of{' '}
+                            <span className="text-white font-semibold">{filteredTags.length}</span> releases
+                        </div>
+                    </>
+                ) : (
+                    /* Tag Details View */
+                    <div className="max-w-4xl mx-auto">
+                        <button
+                            onClick={() => setSelectedTag(null)}
+                            className="mb-6 flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all"
+                        >
+                            <ChevronRight className="w-4 h-4 rotate-180" />
+                            <span>Back to all versions</span>
+                        </button>
+
+                        <div className="p-8 rounded-2xl bg-white/5 border border-white/10 mb-6">
+                            <div className="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 className="text-3xl font-bold text-white mb-2">{selectedTag.name}</h3>
+                                    <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-sm font-medium border border-purple-400/30">
+                                        Version {selectedTag.version}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Gradle Import */}
+                            <div className="mb-6">
+                                <div className="flex items-center justify-between mb-3">
+                                    <h4 className="text-lg font-bold flex items-center gap-2">
+                                        <Zap className="w-5 h-5 text-yellow-400" />
+                                        Gradle Import
+                                    </h4>
+                                    <button
+                                        onClick={() => copyToClipboard(`repositories {
+    maven {
+        url = "https://sandro642.github.io/connectlib/jar"
+    }
+}
+
+dependencies {
+    implementation 'fr.sandro642.github:ConnectLib:${selectedTag.version}'
+}`)}
+                                        className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-all text-sm"
+                                    >
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre className="text-sm text-gray-300 bg-black/30 p-4 rounded-lg overflow-x-auto">
+{`repositories {
+    maven {
+        url = "https://sandro642.github.io/connectlib/jar"
+    }
+}
+
+dependencies {
+    implementation 'fr.sandro642.github:ConnectLib:${selectedTag.version}'
+}`}
+                                </pre>
+                            </div>
+
+                            {/* Maven Import */}
+                            <div className="mb-6">
+                                <div className="flex items-center justify-between mb-3">
+                                    <h4 className="text-lg font-bold flex items-center gap-2">
+                                        <Code className="w-5 h-5 text-cyan-400" />
+                                        Maven Import
+                                    </h4>
+                                    <button
+                                        onClick={() => copyToClipboard(`<repository>
+    <id>connectlib</id>
+    <url>https://sandro642.github.io/connectlib/jar</url>
+</repository>
+
+<dependency>
+    <groupId>fr.sandro642.github</groupId>
+    <artifactId>ConnectLib</artifactId>
+    <version>${selectedTag.version}</version>
+</dependency>`)}
+                                        className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-all text-sm"
+                                    >
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre className="text-sm text-gray-300 bg-black/30 p-4 rounded-lg overflow-x-auto">
+{`<repository>
+    <id>connectlib</id>
+    <url>https://sandro642.github.io/connectlib/jar</url>
+</repository>
+
+<dependency>
+    <groupId>fr.sandro642.github</groupId>
+    <artifactId>ConnectLib</artifactId>
+    <version>${selectedTag.version}</version>
+</dependency>`}
+                                </pre>
+                            </div>
+
+                            {/* Download Links */}
+                            <div>
+                                <h4 className="text-lg font-bold mb-3 flex items-center gap-2">
+                                    <Download className="w-5 h-5 text-green-400" />
+                                    Direct Downloads
+                                </h4>
+                                <div className="grid md:grid-cols-2 gap-3">
+                                    <a
+                                        href={selectedTag.jarUrl}
+                                        className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 transition-all"
+                                    >
+                                        <Download className="w-4 h-4" />
+                                        <span className="font-medium">Download JAR</span>
+                                    </a>
+                                    <a
+                                        href={selectedTag.zipball_url}
+                                        className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-white/10 hover:bg-white/20 transition-all"
+                                    >
+                                        <Download className="w-4 h-4" />
+                                        <span className="font-medium">Download ZIP</span>
+                                    </a>
+                                    <a
+                                        href={selectedTag.tarball_url}
+                                        className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-white/10 hover:bg-white/20 transition-all"
+                                    >
+                                        <Download className="w-4 h-4" />
+                                        <span className="font-medium">Download TAR</span>
+                                    </a>
+                                    <a
+                                        href={`https://github.com/Sandro642/ConnectLib/releases/tag/${selectedTag.name}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-white/10 hover:bg-white/20 transition-all"
+                                    >
+                                        <Github className="w-4 h-4" />
+                                        <span className="font-medium">View on GitHub</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 }
 
 export default function ConnectLibLanding() {
@@ -112,7 +438,7 @@ connectLib.Init(ResourceType.MAIN_RESOURCES, LangType.ENGLISH, RouteList.class);
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                            <a href="https://github.com/Sandro642/ConnectLib" className="group px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 transition-all shadow-lg shadow-blue-500/50 hover:shadow-xl hover:shadow-blue-500/70 flex items-center gap-2">
+                            <a href="#downloads" className="group px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 transition-all shadow-lg shadow-blue-500/50 hover:shadow-xl hover:shadow-blue-500/70 flex items-center gap-2">
                                 <Download className="w-5 h-5"/>
                                 <span className="font-semibold">Get Started Now</span>
                                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform"/>
@@ -162,6 +488,9 @@ connectLib.Init(ResourceType.MAIN_RESOURCES, LangType.ENGLISH, RouteList.class);
                 </div>
             </div>
 
+            {/* Downloads Section */}
+            <DownloadsSection />
+
             {/* Code Example */}
             <div className="relative py-20">
                 <div className="container mx-auto px-6">
@@ -186,26 +515,6 @@ connectLib.Init(ResourceType.MAIN_RESOURCES, LangType.ENGLISH, RouteList.class);
                                     <code>{codeExample}</code>
                                 </pre>
                             </div>
-                        </div>
-
-                        <div className="mt-8 p-6 rounded-xl bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-400/30 backdrop-blur-sm">
-                            <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
-                                <Zap className="w-5 h-5 text-yellow-400"/>
-                                Gradle Installation
-                            </h3>
-                            <pre className="text-sm text-gray-300 bg-black/30 p-4 rounded-lg mt-3">
-{`
-repositories {
-    maven {
-        url = "https://sandro642.github.io/connectlib/jar"
-    }
-}
-
-dependencies {
-    implementation 'fr.sandro642.github:ConnectLib:0.3.4-STABLE'
-}
-`}
-                            </pre>
                         </div>
                     </div>
                 </div>
