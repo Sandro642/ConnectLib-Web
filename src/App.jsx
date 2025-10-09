@@ -368,7 +368,7 @@ export default function ConnectLibLanding() {
         { icon: <Zap className="w-6 h-6"/>, title: "Automated Execution", desc: "Asynchronous jobs without blocking" },
         { icon: <Code className="w-6 h-6"/>, title: "Extensible & Modular", desc: "Architecture designed to evolve" },
         { icon: <Shield className="w-6 h-6"/>, title: "Built-in Security", desc: "Native protection of your data" },
-        { icon: <Rocket className="w-6 h-6"/>, title: "Optimal Performance", desc: "Java 23 and Projet Reactor" },
+        { icon: <Rocket className="w-6 h-6"/>, title: "Optimal Performance", desc: "Java 23 and Project Reactor" },
         { icon: <Star className="w-6 h-6"/>, title: "Detailed Logs", desc: "Complete monitoring of your flows" }
     ];
 
