@@ -444,8 +444,8 @@ connectLib.Init(ResourceType.MAIN_RESOURCES, LangType.ENGLISH, RouteList.class);
                                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform"/>
                             </a>
 
-                            <a href="#features" className="px-8 py-4 rounded-xl bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all border border-white/20">
-                                <span className="font-semibold">Discover Features</span>
+                            <a href="https://docs.connectlib.systemsolutiongroup.xyz/" className="px-8 py-4 rounded-xl bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all border border-white/20">
+                                <span className="font-semibold">See documentation</span>
                             </a>
                         </div>
 
