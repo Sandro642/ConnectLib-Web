@@ -130,9 +130,18 @@ function DownloadsSection() {
                                             <Package className="w-5 h-5 text-cyan-400" />
                                             <span className="font-bold text-lg text-cyan-400">#{tag.id}</span>
                                         </div>
-                                        <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-sm font-medium border border-purple-400/30">
+
+                                        <span
+                                            className={
+                                                `px-3 py-1 rounded-full text-sm font-medium border ` +
+                                                (tag.version.endsWith('DEV_BUILD')
+                                                        ? 'bg-yellow-500/20 text-yellow-300 border-yellow-400/30'
+                                                        : 'bg-purple-500/20 text-purple-300 border-purple-400/30'
+                                                )
+                                            }>
                                             {tag.version}
                                         </span>
+
                                     </div>
 
                                     <h3 className="text-xl font-bold mb-4 text-white">{tag.name}</h3>
