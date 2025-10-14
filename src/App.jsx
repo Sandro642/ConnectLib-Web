@@ -230,9 +230,16 @@ function DownloadsSection() {
                             <div className="flex items-center justify-between mb-6">
                                 <div>
                                     <h3 className="text-3xl font-bold text-white mb-2">{selectedTag.name}</h3>
-                                    <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-sm font-medium border border-purple-400/30">
-                                        Version {selectedTag.version}
-                                    </span>
+                                    <span
+                                        className={
+                                            `px-3 py-1 rounded-full text-sm font-medium border ` +
+                                            (tag.version.endsWith('DEV_BUILD')
+                                                    ? 'bg-yellow-500/20 text-yellow-300 border-yellow-400/30'
+                                                    : 'bg-purple-500/20 text-purple-300 border-purple-400/30'
+                                            )
+                                        }>
+                                           Version {tag.version}
+                                        </span>
                                 </div>
                             </div>
 
