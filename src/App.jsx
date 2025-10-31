@@ -453,7 +453,7 @@ connectLib.Init(ResourceType.MAIN_RESOURCES, LangType.ENGLISH, RouteList.class);
                                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform"/>
                             </a>
 
-                            <a href="https://docs.connectlib.systemsolutiongroup.xyz/" className="px-8 py-4 rounded-xl bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all border border-white/20">
+                            <a href="https://docs.connectlib.xyz" className="px-8 py-4 rounded-xl bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all border border-white/20">
                                 <span className="font-semibold">See documentation</span>
                             </a>
                         </div>
@@ -499,35 +499,6 @@ connectLib.Init(ResourceType.MAIN_RESOURCES, LangType.ENGLISH, RouteList.class);
 
             {/* Downloads Section */}
             <DownloadsSection />
-
-            {/* Code Example */}
-            <div className="relative py-20">
-                <div className="container mx-auto px-6">
-                    <div className="max-w-4xl mx-auto">
-                        <h2 className="text-4xl md:text-5xl font-bold text-center mb-8">
-                            Simple & <span className="text-cyan-400">Powerful</span>
-                        </h2>
-                        <p className="text-center text-gray-400 mb-12 text-lg">
-                            Start in just a few lines of code
-                        </p>
-
-                        <div className="relative group">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000"/>
-                            <div className="relative bg-slate-900 rounded-2xl p-6 border border-white/10">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <div className="w-3 h-3 rounded-full bg-red-500"/>
-                                    <div className="w-3 h-3 rounded-full bg-yellow-500"/>
-                                    <div className="w-3 h-3 rounded-full bg-green-500"/>
-                                    <span className="ml-4 text-gray-500 text-sm">Example.java</span>
-                                </div>
-                                <pre className="text-sm text-cyan-300 overflow-x-auto">
-                                    <code>{codeExample}</code>
-                                </pre>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             {/* Stats Section */}
             <div className="relative py-20 bg-black/20 backdrop-blur-sm">
